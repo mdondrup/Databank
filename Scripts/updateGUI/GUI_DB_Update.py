@@ -105,7 +105,8 @@ def SQL_Select(Table: str, Values: list, Condition: dict = {}) -> str:
 def SQL_Create(Table: str, Values: dict, Condition: dict = {}) -> str:
     '''
     Generate a SQL query to insert a new entry in a table.
-
+    ### ICICIC: This function generates invalid SQL syntax!
+    ### Also, it is oddly named, should be SQL_Insert
     Parameters
     ----------
     Table : str
@@ -121,9 +122,13 @@ def SQL_Create(Table: str, Values: dict, Condition: dict = {}) -> str:
         The SQL query:
         INSERT INTO Table ( Values.keys()[0], ..., Values.keys()[-1] ) VALUES
                     ( Values.values()[0], ..., Values.values()[-1] )
+               ### ICICIC: This is not standard SQL syntax 
+               ### (conditions are not defined with 'WHEN' either)
                WHEN Condition.keys()[0]=Condition.value()[0] AND ...
                     Condition.keys()[-1]=Condition.value()[-1]
     '''
+    ### ICICIC: This is plain wrong, e.g. will introduce quoting for numeric values.
+    ### Also, it relies on the implicit order of elements in the dictionary, which is only guaranteed since 3.7 
     Query = (
         f' INSERT INTO `{Table}` (' +
         ", ".join(map(lambda x: f'`{x}`', Values.keys())) +
@@ -131,6 +136,7 @@ def SQL_Create(Table: str, Values: dict, Condition: dict = {}) -> str:
     )
 
     # Add a condition to the search
+    # ICICIC: Invalid SQL syntax
     if Condition:
         Query += (
             'WHERE ' +
